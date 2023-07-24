@@ -9,7 +9,7 @@ workflow max_spin {
         Int cpu = 24
         String memory = "128G"
         Int extra_disk_space = 32
-        String docker = "izabellaleahz/maxspinworkflow:latest"
+        String docker = "mparikhbroad/hotspot:latest"
         Int preemptible = 2
     }
     String output_directory_stripped = sub(output_directory, "/+$", "")
