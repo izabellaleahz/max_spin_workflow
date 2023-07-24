@@ -71,7 +71,7 @@ task run_maxspin {
             obsm=adata.obsm,
             obs=adata.obs,
             obsp=adata.obsp,
-            uns=adata.uns
+            uns=adata.uns,
             var=adata.var)
         spatial_information(adata_nmf, layer="log1p", prior=None)
         pairwise_spatial_information(adata_nmf, layer="log1p", prior=None)
