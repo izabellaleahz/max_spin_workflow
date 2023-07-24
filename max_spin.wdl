@@ -45,38 +45,23 @@ task run_max_spin {
         set -e
         mkdir -p outputs
         python <<CODE
-
-        #imports 
         from maxspin import spatial_information, pairwise_spatial_information
         import numpy as np
         import scanpy as sc
         import squidpy as sq
         import scvi
-
-        #load in anndata object 
         adata_full = sc.read_h5ad('~{anndata_file}')
-
         samples = list(set(adata.obs['~{sample_key}']))
-
         for sample in sample: 
             adata_list.append(adata_full[adata_full.obs['~{sample_key}'] == sample])
-
-        # look at autocorrelation per sample 
-        
         scvi.model.SCVI.setup_anndata(adata_list)
         model = scvi.model.SCVI(adata_list, n_latent=20)
-
-        # Sample log-expression values from the posterior.
         posterior_samples = np.log(model.get_normalized_expression(return_numpy=True, return_mean=False, n_samples=20, library_size="latent"))
         adata_scvi = adata_list.copy()
         adata_scvi.X = np.mean(posterior_samples, axis=0)
         adata_scvi.layers["std"] = np.std(posterior_samples, axis=0)
-
         spatial_information(adata_scvi, prior="gaussian")
-        #export an anndata object per sample 
         adata_scvi.write_h5ad('output/autocorrelation_output.h5ad')
-        
-        #pairwise correlation 
         Nnmf = 20
         nmf = NMF(n_components=Nnmf, init='nndsvd', random_state=0)
         W = nmf.fit_transform(np.exp(adata_scvi.X))
@@ -88,18 +73,14 @@ task run_max_spin {
             obsp=adata.obsp,
             uns=adata.uns
             var=adata.var)
-        #computer spatial information for each meta gene 
         spatial_information(adata_nmf, layer="log1p", prior=None)
-        #pairwise spatial information 
         pairwise_spatial_information(adata_nmf, layer="log1p", prior=None)
-        #export an anndata object per sample 
         adata_scvi.write_h5ad('output/pairwise_output.h5ad')
-
         CODE
         gsutil -m rsync -r outputs ~{output_dir}
     >>>
     output {
-        File maxspin_object = 'outputs/'
+        File maxspin_object = 'outputs/pairwise_output.h5ad'
     }
     runtime {
         docker: docker
