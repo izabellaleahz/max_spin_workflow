@@ -54,7 +54,7 @@ task run_max_spin {
         import scvi
 
         #load in anndata object 
-        adata_full = sc.read_h5ad("PDAC_anndata.h5ad")
+        adata_full = sc.read_h5ad('~{anndata_file}')
 
         samples = list(set(adata.obs['~{sample_key}']))
 
