@@ -1,5 +1,5 @@
 version 1.0
-workflow max_spin {
+workflow maxspin {
     input {
         String output_directory
         File anndata_file
@@ -9,11 +9,11 @@ workflow max_spin {
         Int cpu = 24
         String memory = "128G"
         Int extra_disk_space = 32
-        String docker = "mparikhbroad/hotspot:latest"
+        String docker = "izabellaleahz/maxspinworkflow:latest"
         Int preemptible = 2
     }
     String output_directory_stripped = sub(output_directory, "/+$", "")
-    call run_max_spin {
+    call run_maxspin {
         input:
             output_dir = output_directory_stripped,
             anndata_file = anndata_file,
@@ -26,10 +26,10 @@ workflow max_spin {
             preemptible=preemptible
     }
     output {
-        File maxspin_object = run_max_spin.maxspin_object
+        File maxspin_object = run_maxspin.maxspin_object
     }
 }
-task run_max_spin {
+task run_maxspin {
     input {
         String output_dir
         File anndata_file
