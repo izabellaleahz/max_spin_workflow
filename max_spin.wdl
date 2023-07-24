@@ -61,7 +61,7 @@ task run_maxspin {
         adata_scvi.X = np.mean(posterior_samples, axis=0)
         adata_scvi.layers["std"] = np.std(posterior_samples, axis=0)
         spatial_information(adata_scvi, prior="gaussian")
-        adata_scvi.write_h5ad('output/autocorrelation_output.h5ad')
+        adata_scvi.write_h5ad('~{output_dir}' + 'autocorrelation_output.h5ad')
         Nnmf = 20
         nmf = NMF(n_components=Nnmf, init='nndsvd', random_state=0)
         W = nmf.fit_transform(np.exp(adata_scvi.X))
@@ -75,12 +75,12 @@ task run_maxspin {
             var=adata.var)
         spatial_information(adata_nmf, layer="log1p", prior=None)
         pairwise_spatial_information(adata_nmf, layer="log1p", prior=None)
-        adata_scvi.write_h5ad('output/pairwise_output.h5ad')
+        adata_scvi.write_h5ad('~{output_dir}' + 'pairwise_output.h5ad')
         CODE
         gsutil -m rsync -r outputs ~{output_dir}
     >>>
     output {
-        File maxspin_object = 'outputs/pairwise_output.h5ad'
+        File maxspin_object = '~{output_dir}' + 'pairwise_output.h5ad'
     }
     runtime {
         docker: docker
