@@ -51,11 +51,9 @@ task run_maxspin {
         import squidpy as sq
         import scvi
         adata_full = sc.read_h5ad('~{anndata_file}')
-        samples = list(set(adata.obs['~{sample_key}']))
-        for sample in sample: 
-            adata_list.append(adata_full[adata_full.obs['~{sample_key}'] == sample])
-        scvi.model.SCVI.setup_anndata(adata_list)
-        model = scvi.model.SCVI(adata_list, n_latent=20)
+
+        scvi.model.SCVI.setup_anndata(adata_full)
+        model = scvi.model.SCVI(adata_full, n_latent=20)
         posterior_samples = np.log(model.get_normalized_expression(return_numpy=True, return_mean=False, n_samples=20, library_size="latent"))
         adata_scvi = adata_list.copy()
         adata_scvi.X = np.mean(posterior_samples, axis=0)

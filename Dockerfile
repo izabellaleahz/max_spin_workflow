@@ -1,6 +1,5 @@
 # Use Python 3.8-slim as the base image
 FROM python:3.8-slim-buster
-
 # Set the default shell to bash
 SHELL ["/bin/bash", "-c"]
 
